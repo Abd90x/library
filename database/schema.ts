@@ -64,3 +64,24 @@ export const books = pgTable("books", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+export const borrows = pgTable("borrows", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bookId: uuid("book_id")
+    .notNull()
+    .references(() => books.id, { onDelete: "cascade" }),
+  dueDate: date("due_date").notNull(),
+  returnDate: date("return_date"),
+  status: BORROW_STATUS_ENUM("borrow_status").notNull().default("BORROWED"),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+  }).defaultNow(),
+  updatedAt: timestamp("updated_at", {
+    withTimezone: true,
+  })
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});

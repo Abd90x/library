@@ -11,6 +11,8 @@ import React from "react";
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
+  const session = await auth();
+
   const [bookDetails] = await db
     .select()
     .from(books)
@@ -23,7 +25,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <>
-      <BookOverview {...bookDetails} />
+      <BookOverview {...bookDetails} userId={session?.user?.id as string} />
       <div className="book-details">
         <div className="flex-[1.5]">
           <section className="flex flex-col gap7">
