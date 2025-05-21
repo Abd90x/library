@@ -3,8 +3,9 @@ import React from "react";
 import BookCover from "./book-cover";
 import BorrowBook from "./borrow-book";
 import { db } from "@/database/drizzle";
-import { users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { borrows, users } from "@/database/schema";
+import { eq, and } from "drizzle-orm";
+import { Button } from "./ui/button";
 
 interface Props extends Book {
   userId: string;
@@ -27,6 +28,12 @@ const BookOverview = async ({
     .select()
     .from(users)
     .where(eq(users.id, userId))
+    .limit(1);
+
+  const isBorrowed = await db
+    .select()
+    .from(borrows)
+    .where(and(eq(borrows.bookId, bookId), eq(borrows.userId, userId)))
     .limit(1);
 
   const borrowingEligiblity = {
@@ -67,11 +74,20 @@ const BookOverview = async ({
 
         <p className="book-description">{description}</p>
 
-        <BorrowBook
-          bookId={bookId}
-          userId={userId}
-          borrowingEligiblity={borrowingEligiblity}
-        />
+        {isBorrowed.length > 0 ? (
+          <Button className="book-overview_btn" disabled={true}>
+            <Image src="/icons/book.svg" alt="book" width={20} height={20} />
+            <p className="font-bebas-neue text-xl text-dark-100">Borrowed</p>
+          </Button>
+        ) : (
+          user && (
+            <BorrowBook
+              bookId={bookId}
+              userId={userId}
+              borrowingEligiblity={borrowingEligiblity}
+            />
+          )
+        )}
       </div>
 
       <div className="relative flex flex-1 justify-center">

@@ -48,6 +48,7 @@ const BorrowBook = ({ bookId, userId, borrowingEligiblity }: Props) => {
       });
     } finally {
       setBorrowing(false);
+      router.refresh();
     }
   };
 
