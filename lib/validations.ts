@@ -30,7 +30,7 @@ export const bookSchema = z.object({
     .string()
     .min(3, "Genre must be at least 3 characters long")
     .max(50, "Genre must be at most 50 characters long"),
-  rating: z
+  rating: z.coerce
     .number()
     .min(1, "Rating must be at least 1")
     .max(5, "Rating must be at most 5"),
