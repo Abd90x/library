@@ -47,7 +47,7 @@ interface IUser {
   email: string;
   universityId: number;
   universityCard: string;
-  status: "PENDING" | "APPROVER" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED";
   role: "USER" | "ADMIN";
   lastActivityDate?: string | null;
 }

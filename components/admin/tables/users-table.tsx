@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+import UserStatus from "./user-status";
 
 const UsersTable = ({ users }: { users: IUser[] }) => {
   const columnHelper = createColumnHelper<IUser>();
@@ -102,8 +105,21 @@ const UsersTable = ({ users }: { users: IUser[] }) => {
             {table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} className="hover:bg-border/10">
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="max-w-24 truncate border">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  <TableCell
+                    key={cell.id}
+                    className={cn(
+                      cell.column.id === "id" && "max-w-32",
+                      "truncate border"
+                    )}
+                  >
+                    {cell.column.id === "status" ? (
+                      <UserStatus
+                        id={cell.row.original.id}
+                        status={cell.getValue() as string}
+                      />
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
                   </TableCell>
                 ))}
               </TableRow>

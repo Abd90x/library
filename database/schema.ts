@@ -11,7 +11,7 @@ import {
 
 export const STATUS_ENUM = pgEnum("status_enum", [
   "PENDING",
-  "APPROVER",
+  "APPROVED",
   "REJECTED",
 ]);
 
