@@ -573,7 +573,7 @@
   }
 
   .hex-input {
-    @apply h-full flex-1 bg-transparent font-ibm-plex-sans outline-none;
+    @apply font-ibm-plex-sans outline-none;
   }
 
   .hex-color-picker {
@@ -639,5 +639,10 @@
 
   .user-card .email {
     @apply text-light-500 text-sm line-clamp-1 break-words w-full;
+  }
+
+  .text-stroke {
+    -webkit-text-stroke: 0.25rem #000;
+    paint-order: stroke fill;
   }
 }
