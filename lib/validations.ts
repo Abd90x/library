@@ -14,6 +14,7 @@ export const signInSchema = z.object({
 });
 
 export const bookSchema = z.object({
+  id: z.string().uuid().optional(),
   title: z
     .string()
     .min(3, "Title must be at least 3 characters long")
@@ -43,10 +44,12 @@ export const bookSchema = z.object({
   coverColor: z
     .string()
     .trim()
-    .regex(/^#[0-9A-F]{6}$/i, "Invalid color format"),
+    .regex(/^#[0-9A-F]{6}$/i, "Color must be a valid eg. #FFFFFF"),
   videoUrl: z.string().nonempty("Video URL is required"),
   summary: z
     .string()
     .min(3, "Summary must be at least 3 characters long")
-    .max(1000, "Summary must be at most 1000 characters long"),
+    .max(10000, "Summary must be at most 10000 characters long"),
 });
+
+export type TBookSchema = typeof bookSchema._type;

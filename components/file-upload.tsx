@@ -120,7 +120,7 @@ const FileUpload = ({
       />
 
       <button
-        className={cn("upload-btn cursor-pointer", styles.button)}
+        className={cn("upload-btn cursor-pointer px-2.5", styles.button)}
         onClick={(e) => {
           e.preventDefault();
 
@@ -135,13 +135,17 @@ const FileUpload = ({
           alt="upload-icon"
           width={20}
           height={20}
-          className="object-contain"
+          className="object-contain shrink-0"
         />
 
-        <p className={cn("text-base", styles.placeholder)}>{placeholder}</p>
+        <p className={cn("text-base truncate", styles.placeholder)}>
+          {placeholder}
+        </p>
 
         {file && (
-          <p className={cn("upload-filename", styles.text)}>{file.filePath}</p>
+          <p className={cn("upload-filename truncate", styles.text)}>
+            {file.filePath}
+          </p>
         )}
       </button>
 
@@ -160,6 +164,7 @@ const FileUpload = ({
             path={file.filePath!}
             width={500}
             height={300}
+            className="h-96 w-full rounded-xl"
           />
         ) : type === "video" ? (
           <IKVideo

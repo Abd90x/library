@@ -3,6 +3,32 @@ import { books, borrows } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import dayjs from "dayjs";
 import { db } from "@/database/drizzle";
+import { TBookSchema } from "../validations";
+
+export const getBookById = async (params: { bookId: string }) => {
+  const { bookId } = params;
+
+  try {
+    const response = await db.select().from(books).where(eq(books.id, bookId));
+
+    if (!response.length) {
+      return {
+        success: false,
+        message: "Book not found",
+      };
+    }
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(response[0])),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "An error occurred while fetching the book",
+    };
+  }
+};
 
 export const borrowBook = async (params: BorrowBookParams) => {
   const { userId, bookId } = params;
@@ -45,6 +71,43 @@ export const borrowBook = async (params: BorrowBookParams) => {
     return {
       success: false,
       message: "An error occurred while borrowing the book",
+    };
+  }
+};
+
+export const updateBook = async (params: TBookSchema) => {
+  const { id, ...rest } = params;
+  console.log(id);
+  try {
+    const response = await db.update(books).set(rest).where(eq(books.id, id!));
+
+    return {
+      success: true,
+      message: "Book updated successfully",
+      data: JSON.parse(JSON.stringify(response)),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "An error occurred while updating the book",
+    };
+  }
+};
+
+export const deleteBook = async (params: { bookId: string }) => {
+  const { bookId } = params;
+
+  try {
+    await db.delete(books).where(eq(books.id, bookId));
+
+    return {
+      success: true,
+      message: "Book deleted successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "An error occurred while deleting the book",
     };
   }
 };
