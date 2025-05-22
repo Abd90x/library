@@ -40,3 +40,14 @@ interface BorrowBookParams {
   userId: string;
   bookId: string;
 }
+
+interface IUser {
+  id: string;
+  fullName: string;
+  email: string;
+  universityId: number;
+  universityCard: string;
+  status: "PENDING" | "APPROVER" | "REJECTED";
+  role: "USER" | "ADMIN";
+  lastActivityDate?: string | null;
+}
