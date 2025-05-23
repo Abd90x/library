@@ -26,24 +26,39 @@ export const getAllUsers = async () => {
   }
 };
 
-export const updateUserStatus = async (id: string, status: IUser["status"]) => {
+export const updateUser = async (id: string, data: Partial<IUser>) => {
   try {
+    let canChangeRole: IUser[] = [];
+
+    if (data.role && data.role !== "ADMIN")
+      canChangeRole = await db
+        .select()
+        .from(users)
+        .where(eq(users.role, "ADMIN"));
+
+    if (canChangeRole.length === 1) {
+      return {
+        success: false,
+        message: "Sholud at least one admin exist",
+      };
+    }
+
     const response = await db
       .update(users)
-      .set({ status })
+      .set(data)
       .where(eq(users.id, id))
       .returning();
 
     if (response.length > 0) {
       return {
         success: true,
-        message: "User status updated successfully",
+        message: "User updated successfully",
       };
     }
   } catch (error) {
     return {
       success: false,
-      message: "Failed to update user status",
+      message: "Failed to update user",
     };
   }
 };

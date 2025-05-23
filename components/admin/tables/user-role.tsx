@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -11,24 +11,35 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { updateUser } from "@/lib/actions/users";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const UserStatus = ({ status, id }: { status: string; id: string }) => {
-  const handleStatusChange = async (value: string) => {
-    const response = await updateUser(id, { status: value as IUser["status"] });
+const UserRole = ({ role, id }: { role: "ADMIN" | "USER"; id: string }) => {
+  const router = useRouter();
+
+  const [currentRole, setCurrentRole] = useState<"ADMIN" | "USER">(role);
+
+  const handleRoleChange = async (value: "ADMIN" | "USER") => {
+    const response = await updateUser(id, { role: value });
 
     if (response?.success) {
       toast.success("Success", {
         description: response.message,
       });
+      setCurrentRole(value);
     } else {
       toast.error("Error", {
         description: response?.message,
       });
+      setCurrentRole(role);
     }
+
+    console.log(role, currentRole);
+
+    router.refresh();
   };
 
   return (
-    <Select defaultValue={status} onValueChange={handleStatusChange}>
+    <Select value={currentRole} onValueChange={handleRoleChange}>
       <SelectTrigger
         className="border-none shadow-none outline-none focus-visible:border-0 focus-visible:ring-0 focus-visible:shadow-none cursor-pointer"
         size="sm"
@@ -36,28 +47,20 @@ const UserStatus = ({ status, id }: { status: string; id: string }) => {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="PENDING">
+        <SelectItem value="ADMIN">
           <Badge
             variant="outline"
-            className="border border-blue-400 text-blue-400 hover:text-blue-400 text-center uppercase"
+            className="border border-amber-400 text-amber-400 hover:text-amber-400 text-center uppercase"
           >
-            Pending
+            Admin
           </Badge>
         </SelectItem>
-        <SelectItem value="APPROVED">
+        <SelectItem value="USER">
           <Badge
             variant="outline"
-            className="border border-green-500 text-green-500 hover:text-green-500 text-center uppercase"
+            className="border border-gray-400 text-gray-400 hover:text-gray-400 text-center uppercase"
           >
-            Approved
-          </Badge>
-        </SelectItem>
-        <SelectItem value="REJECTED">
-          <Badge
-            variant="outline"
-            className="border border-red-400 text-red-400 hover:text-red-400 text-center uppercase"
-          >
-            Rejected
+            User
           </Badge>
         </SelectItem>
       </SelectContent>
@@ -65,4 +68,4 @@ const UserStatus = ({ status, id }: { status: string; id: string }) => {
   );
 };
 
-export default UserStatus;
+export default UserRole;

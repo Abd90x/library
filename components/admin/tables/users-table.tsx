@@ -26,6 +26,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import UserStatus from "./user-status";
+import UserRole from "./user-role";
 
 const UsersTable = ({ users }: { users: IUser[] }) => {
   const columnHelper = createColumnHelper<IUser>();
@@ -116,6 +117,11 @@ const UsersTable = ({ users }: { users: IUser[] }) => {
                       <UserStatus
                         id={cell.row.original.id}
                         status={cell.getValue() as string}
+                      />
+                    ) : cell.column.id === "role" ? (
+                      <UserRole
+                        id={cell.row.original.id}
+                        role={cell.getValue() as "ADMIN" | "USER"}
                       />
                     ) : (
                       flexRender(cell.column.columnDef.cell, cell.getContext())

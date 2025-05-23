@@ -4,8 +4,6 @@ import React from "react";
 
 const Page = async () => {
   const response = await getAllUsers();
-
-  console.log(response.data);
   const users = response.data ?? [];
   return (
     <section className="w-full rounded-2xl bg-white p-7">
