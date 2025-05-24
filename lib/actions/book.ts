@@ -1,5 +1,5 @@
 "use server";
-import { books, borrows } from "@/database/schema";
+import { books, borrows, users } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import dayjs from "dayjs";
 import { db } from "@/database/drizzle";
@@ -71,6 +71,33 @@ export const borrowBook = async (params: BorrowBookParams) => {
     return {
       success: false,
       message: "An error occurred while borrowing the book",
+    };
+  }
+};
+
+export const getBorrowedBooks = async () => {
+  try {
+    const response = await db
+      .select()
+      .from(borrows)
+      .leftJoin(books, eq(borrows.bookId, books.id))
+      .leftJoin(users, eq(borrows.userId, users.id));
+
+    if (response.length > 0) {
+      return {
+        success: true,
+        data: JSON.parse(JSON.stringify(response)),
+      };
+    } else {
+      return {
+        success: false,
+        message: "No borrowed books found",
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: "An error occurred while fetching the borrowed books",
     };
   }
 };

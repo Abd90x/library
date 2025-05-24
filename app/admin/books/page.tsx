@@ -16,7 +16,7 @@ const Page = async () => {
         <Button className="bg-admin hover:bg-admin/80" asChild>
           <Link href="/admin/books/new" className="text-white">
             <CirclePlus />
-            <span className="hidden sm:inline-block">Create a New Book</span>
+            <span className="hidden sm:inline-block">New Book</span>
           </Link>
         </Button>
       </div>

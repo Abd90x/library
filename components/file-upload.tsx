@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, useState } from "react";
 
 import { IKImage, IKUpload, IKVideo, ImageKitProvider } from "imagekitio-next";
@@ -157,7 +158,7 @@ const FileUpload = ({
         </div>
       )}
 
-      {file &&
+      {file.filePath &&
         (type === "image" ? (
           <IKImage
             alt={file.filePath!}

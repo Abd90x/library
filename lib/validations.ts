@@ -53,3 +53,4 @@ export const bookSchema = z.object({
 });
 
 export type TBookSchema = typeof bookSchema._type;
+export type TSignUpSchema = typeof signUpSchema._type;

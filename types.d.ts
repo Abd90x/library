@@ -51,3 +51,30 @@ interface IUser {
   role: "USER" | "ADMIN";
   lastActivityDate?: string | null;
 }
+
+interface Borrow {
+  id: string;
+  userId: string;
+  bookId: string;
+  dueDate: string;
+  returnDate: string;
+  createdAt: string;
+  status: "BORROWED" | "RETURNED";
+}
+
+interface Borrowed {
+  borrows: Borrow;
+  users: IUser;
+  books: Book;
+}
+
+interface BorrowedBook {
+  id: Borrow["id"];
+  fullName: IUser["fullName"];
+  email: IUser["email"];
+  title: Book["title"];
+  status: Borrow["status"];
+  dueDate: Borrow["dueDate"];
+  borrowDate: Borrow["createdAt"];
+  returnDate: Borrow["returnDate"];
+}
