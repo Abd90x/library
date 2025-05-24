@@ -33,11 +33,17 @@ const BookOverview = async ({
   const isBorrowed = await db
     .select()
     .from(borrows)
-    .where(and(eq(borrows.bookId, bookId), eq(borrows.userId, userId)))
+    .where(
+      and(
+        eq(borrows.bookId, bookId),
+        eq(borrows.userId, userId),
+        eq(borrows.status, "BORROWED")
+      )
+    )
     .limit(1);
 
   const borrowingEligiblity = {
-    isEligible: availableCopies > 0 && user.status === "APPROVER",
+    isEligible: availableCopies > 0 && user.status === "APPROVED",
     message:
       availableCopies < 0
         ? "Book is currently unavailable"

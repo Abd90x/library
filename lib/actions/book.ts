@@ -1,9 +1,10 @@
 "use server";
 import { books, borrows, users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import dayjs from "dayjs";
 import { db } from "@/database/drizzle";
 import { TBookSchema } from "../validations";
+import { increment } from "../utils";
 
 export const getBookById = async (params: { bookId: string }) => {
   const { bookId } = params;
@@ -135,6 +136,38 @@ export const deleteBook = async (params: { bookId: string }) => {
     return {
       success: false,
       message: "An error occurred while deleting the book",
+    };
+  }
+};
+
+export const returnBook = async (params: { borrowId: string }) => {
+  const { borrowId } = params;
+
+  try {
+    const response = await db
+      .update(borrows)
+      .set({
+        returnDate: dayjs().toDate().toDateString(),
+        status: "RETURNED",
+      })
+      .where(eq(borrows.id, borrowId))
+      .returning();
+
+    await db
+      .update(books)
+      .set({
+        availableCopies: increment(books.availableCopies),
+      })
+      .where(eq(books.id, response[0].bookId));
+
+    return {
+      success: true,
+      message: "Book returned successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "An error occurred while returning the book",
     };
   }
 };

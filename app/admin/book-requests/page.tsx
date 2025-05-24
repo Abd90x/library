@@ -9,6 +9,8 @@ const Page = async () => {
 
   borrowsData = response.data.map((item: Borrowed) => ({
     id: item.borrows.id,
+    userId: item.users.id,
+    bookId: item.books.id,
     fullName: item.users.fullName,
     email: item.users.email,
     title: item.books.title,

@@ -2,7 +2,12 @@
 
 import React, { useEffect, useMemo } from "react";
 
-import { RefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  RefreshCcw,
+  ChevronLeft,
+  ChevronRight,
+  CornerDownLeft,
+} from "lucide-react";
 
 import {
   createColumnHelper,
@@ -24,6 +29,9 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { returnBook } from "@/lib/actions/book";
+import { toast } from "sonner";
 
 type Props = {
   data: Array<BorrowedBook>;
@@ -31,19 +39,35 @@ type Props = {
 
 const BorrowTable = ({ data }: Props) => {
   const columnHelper = createColumnHelper<BorrowedBook>();
-  const columnsHeadersArray: Array<keyof BorrowedBook> = [
-    "id",
-    "fullName",
-    "email",
-    "title",
-    "status",
-    "dueDate",
-    "borrowDate",
-    "returnDate",
-  ];
 
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const handleReturnBook = async (borrowId: string) => {
+    const res = await returnBook({ borrowId });
+
+    if (res.success) {
+      toast.success("Success", {
+        description: res.message,
+      });
+      router.refresh();
+    } else {
+      toast.error("Error", {
+        description: res.message,
+      });
+    }
+  };
+
+  const ReturnButton = ({ id }: { id: string }) => (
+    <Button
+      className="bg-admin text-white hover:bg-admin/80"
+      onClick={() => handleReturnBook(id)}
+    >
+      Return
+    </Button>
+  );
+
+  const ActionsCell = ReturnButton;
 
   const columns = [
     columnHelper.accessor("id", {
@@ -81,9 +105,11 @@ const BorrowTable = ({ data }: Props) => {
     columnHelper.accessor("returnDate", {
       header: "Return Date",
       cell: (info) =>
-        info.getValue()
-          ? new Date(info.getValue()).toLocaleDateString()
-          : "Not Returned",
+        info.getValue() ? (
+          new Date(info.getValue()).toLocaleDateString()
+        ) : (
+          <ActionsCell id={info.cell.row.original.id} />
+        ),
     }),
   ];
 
@@ -147,7 +173,24 @@ const BorrowTable = ({ data }: Props) => {
                       cell.column.id === "id" && "max-w-24 truncate"
                     )}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {cell.column.id === "status" ? (
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          cell.getValue() === "RETURNED" &&
+                            "border-green-500 text-green-500",
+                          cell.getValue() === "BORROWED" &&
+                            "border-blue-400 text-blue-400"
+                        )}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </Badge>
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
                   </TableCell>
                 ))}
               </TableRow>

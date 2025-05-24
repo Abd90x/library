@@ -70,6 +70,8 @@ interface Borrowed {
 
 interface BorrowedBook {
   id: Borrow["id"];
+  userId: IUser["id"];
+  bookId: Book["id"];
   fullName: IUser["fullName"];
   email: IUser["email"];
   title: Book["title"];
