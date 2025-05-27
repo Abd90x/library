@@ -1,24 +1,24 @@
 import { auth, signOut } from "@/auth";
 import BookList from "@/components/book-list";
 import { Button } from "@/components/ui/button";
-import { db } from "@/database/drizzle";
-import { books, borrows } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { getBorrowedBooks } from "@/lib/actions/book";
 import React from "react";
 
 const Page = async () => {
   const session = await auth();
 
-  const borrowedBooks = await db
-    .select()
-    .from(borrows)
-    .where(eq(borrows.userId, session?.user?.id as string))
-    .leftJoin(books, eq(books.id, borrows.bookId));
+  const borrowedBooks = await getBorrowedBooks();
 
-  const borrowedList = borrowedBooks.map((row) => row.books);
+  const borrowedList = borrowedBooks.data
+    ?.filter((item: Borrowed) => item.borrows.status === "BORROWED")
+    .map((row: Borrowed) => row.books);
+
+  const returnedList = borrowedBooks.data
+    ?.filter((item: Borrowed) => item.borrows.status === "RETURNED")
+    .map((row: Borrowed) => row.books);
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <h2 className="text-light-200 font-bold text-4xl">
           Welcome Back, {session?.user?.name}
@@ -39,15 +39,18 @@ const Page = async () => {
         <Button>Logout</Button>
       </form>
 
-      {borrowedList.length > 0 && (
-        <BookList
-          title="Borrowed Books"
-          books={borrowedList.filter(
-            (book): book is NonNullable<typeof book> => book !== null
-          )}
-        />
-      )}
-    </>
+      <div>
+        {borrowedList.length > 0 && (
+          <BookList title="Borrowed Books" books={borrowedList} />
+        )}
+      </div>
+      <hr className="border-primary border-dashed" />
+      <div>
+        {returnedList.length > 0 && (
+          <BookList title="Borrow History" books={returnedList} />
+        )}
+      </div>
+    </div>
   );
 };
 

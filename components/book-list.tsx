@@ -14,9 +14,9 @@ const BookList = ({ title, books, containerClassName }: Props) => {
     <section className={containerClassName}>
       <h2 className="font-bebas-neue text-4xl text-light-100">{title}</h2>
 
-      <ul className="book-list justify-between">
-        {books.map((book) => (
-          <BookCard key={book.title} {...book} />
+      <ul className="book-list">
+        {books.map((book, idx) => (
+          <BookCard key={book.title + idx} {...book} />
         ))}
       </ul>
     </section>

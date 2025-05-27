@@ -165,7 +165,7 @@ const FileUpload = ({
             path={file.filePath!}
             width={500}
             height={300}
-            className="h-96 w-full rounded-xl"
+            className="h-96 w-full object-contain rounded-xl"
           />
         ) : type === "video" ? (
           <IKVideo
